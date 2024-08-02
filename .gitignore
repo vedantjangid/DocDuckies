@@ -1,0 +1,33 @@
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.env
+
+# Environment and configuration files
+.env.yaml
+.env
+*.env
+config.yaml
+config.json
+
+# Service account key files
+*.json
+
+# Logs
+*.log
+
+# Virtual environment
+venv/
+ENV/
+env/
+venv.bak/
+
+# Cloud Function deployment artifacts
+node_modules/
+.functionignore

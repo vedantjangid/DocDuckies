@@ -1,39 +1,41 @@
-import { ChartTooltipContent, ChartTooltip, ChartContainer } from "@/components/ui/chart"
-import { CartesianGrid, XAxis, Bar, BarChart } from "recharts"
+// BarchartChart.tsx
+import React from 'react';
+import { ChartTooltipContent, ChartTooltip, ChartContainer } from "@/components/ui/chart";
+import { CartesianGrid, XAxis, YAxis, Bar, BarChart, ResponsiveContainer } from "recharts";
 
-export function BarchartChart(props) {
+
+
+interface BarchartChartProps {
+    data: { name: string; value: number }[];
+}
+
+
+
+export const BarchartChart = ({ data }: { data: { name: string; value: number | null }[] }) => {
+    const validData = data.filter(item => item.value !== null);
+
+    if (validData.length === 0) {
+        return <div>No valid data available</div>;
+    }
+
     return (
-        <div {...props}>
+        <ResponsiveContainer width="100%" height={250}>
             <ChartContainer
                 config={{
                     desktop: {
-                        label: "Desktop",
+                        label: "Financial Data",
                         color: "hsl(var(--chart-1))",
                     },
                 }}
-                className="min-h-[200px]"
             >
-                <BarChart
-                    accessibilityLayer
-                    data={[
-                        { month: "January", desktop: 186 },
-                        { month: "February", desktop: 305 },
-                        { month: "March", desktop: 237 },
-
-                    ]}
-                >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                        dataKey="month"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value) => value.slice(0, 3)}
-                    />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+                <BarChart data={validData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+                    <Bar dataKey="value" fill="var(--color-desktop)" radius={8} />
                 </BarChart>
             </ChartContainer>
-        </div>
-    )
-}
+        </ResponsiveContainer>
+    );
+};

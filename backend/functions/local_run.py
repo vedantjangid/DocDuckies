@@ -21,7 +21,7 @@ app = create_app(target='process_pdf', source='main.py', signature_type='http')
 def test_process_pdf():
     # Test data
     test_data = {
-        "pdf_gcs_uri": "gs://document-ai-financial-storage/Balance-Sheet-Example.pdf"
+        "pdf_gcs_uri": "gs://document-ai-financial-storage/ptcul-balance-sheet-fy-2022-23 - .pdf"
     }
 
     # Send a POST request to the local server

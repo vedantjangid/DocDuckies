@@ -1,53 +1,43 @@
+// PiechartlabelChart.tsx
+import React from 'react';
 import { ChartTooltipContent, ChartTooltip, ChartContainer } from "@/components/ui/chart"
-import { Pie, PieChart } from "recharts"
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 
-export function PiechartlabelChart(props) {
+interface PiechartlabelChartProps {
+    data: { name: string; value: number }[];
+}
+
+const COLORS = ['#0088FE', '#00C49F'];
+
+export function PiechartlabelChart({ data }: PiechartlabelChartProps) {
     return (
-        <div {...props}>
+        <ResponsiveContainer width="100%" height={250}>
             <ChartContainer
                 config={{
-                    visitors: {
-                        label: "Visitors",
-                    },
-                    chrome: {
-                        label: "Chrome",
+                    desktop: {
+                        label: "Financial Data",
                         color: "hsl(var(--chart-1))",
                     },
-                    safari: {
-                        label: "Safari",
-                        color: "hsl(var(--chart-2))",
-                    },
-                    firefox: {
-                        label: "Firefox",
-                        color: "hsl(var(--chart-3))",
-                    },
-                    edge: {
-                        label: "Edge",
-                        color: "hsl(var(--chart-4))",
-                    },
-                    other: {
-                        label: "Other",
-                        color: "hsl(var(--chart-5))",
-                    },
                 }}
-                className="mx-auto aspect-square max-h-[250px] pb-0"
             >
                 <PieChart>
-                    <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                     <Pie
-                        data={[
-                            { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-                            { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-                            { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-                            { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-                            { browser: "other", visitors: 90, fill: "var(--color-other)" },
-                        ]}
-                        dataKey="visitors"
-                        label
-                        nameKey="browser"
-                    />
+                        data={data}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                        {data.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
                 </PieChart>
             </ChartContainer>
-        </div>
-    )
+        </ResponsiveContainer>
+    );
 }
