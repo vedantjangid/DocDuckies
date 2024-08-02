@@ -22,18 +22,19 @@ export function DashBoard() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
+  // Handle file upload and processing
   const onFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
       try {
         setIsUploading(true);
         setUploadError(null);
-        const data = await handleFileUpload(file)
+        const data = await handleFileUpload(file);
         const processedData = processFinancialData(data);
         setFinancialData(processedData);
         setUploadedFiles([...uploadedFiles, file.name]);
       } catch (error) {
-        console.error("Error processing file:", error)
+        console.error("Error processing file:", error);
         setUploadError("Failed to process file. Please try again.");
       } finally {
         setIsUploading(false);
@@ -54,9 +55,20 @@ export function DashBoard() {
     { name: 'Liabilities', value: financialData['Total-Liabilities'] }
   ].filter(item => item.value !== null);
 
-  const capitalStructureData = [
-    { name: 'Capital', value: financialData['Capital'] },
-    { name: 'Liabilities', value: financialData['Total-Liabilities'] }
+  const financialRatiosData = [
+    { name: 'Current Ratio', value: financialData['Current-Ratio'] },
+    { name: 'Quick Ratio', value: financialData['Quick-Ratio'] },
+    { name: 'Debt to Assets', value: financialData['Debt-to-Assets-Ratio'] },
+    { name: 'Return on Assets', value: financialData['Return-on-Assets'] },
+    { name: 'Net Profit Margin', value: financialData['Net-Profit-Margin'] }
+  ].filter(item => item.value !== null);
+
+  const financialOverviewData = [
+    { name: 'Total Income', value: financialData['Total-Income'] },
+    { name: 'Total Expenditure', value: financialData['Total-Expenditure'] },
+    { name: 'Net Profit', value: financialData['Net-Profit'] },
+    { name: 'Total Assets', value: financialData['Total-Assets'] },
+    { name: 'Total Liabilities', value: financialData['Total-Liabilities'] }
   ].filter(item => item.value !== null);
 
   return (
@@ -171,16 +183,20 @@ export function DashBoard() {
                 <Card>
                   <CardHeader>
                     <CardDescription>Total Income vs Total Expenditure</CardDescription>
-                    <CardTitle>{financialData.Year || 'N/A'}</CardTitle>
+                    <CardTitle>{financialData.Year || 'Year'}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <BarchartChart data={incomeExpenditureData} />
+                    {incomeExpenditureData.length > 0 ? (
+                      <BarchartChart data={incomeExpenditureData} />
+                    ) : (
+                      <p>No data available</p>
+                    )}
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader>
                     <CardDescription>Assets and Liabilities</CardDescription>
-                    <CardTitle>{financialData.Year || 'N/A'}</CardTitle>
+                    <CardTitle>{financialData.Year || 'Year'}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <LinechartChart data={assetsLiabilitiesData} />
@@ -188,11 +204,11 @@ export function DashBoard() {
                 </Card>
                 <Card>
                   <CardHeader>
-                    <CardDescription>Capital Structure</CardDescription>
-                    <CardTitle>{financialData.Year || 'N/A'}</CardTitle>
+                    <CardDescription>Financial Ratios</CardDescription>
+                    <CardTitle>{financialData.Year || 'Year'}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <PiechartlabelChart data={capitalStructureData} />
+                    <PiechartlabelChart data={financialRatiosData} />
                   </CardContent>
                 </Card>
               </div>

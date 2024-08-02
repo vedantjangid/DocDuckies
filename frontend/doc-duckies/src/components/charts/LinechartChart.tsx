@@ -1,31 +1,47 @@
 // LinechartChart.tsx
 import React from 'react';
-import { ChartTooltipContent, ChartTooltip, ChartContainer } from "@/components/ui/chart"
-import { CartesianGrid, XAxis, YAxis, Line, LineChart, ResponsiveContainer } from "recharts"
+import { ChartTooltipContent, ChartTooltip, ChartContainer } from "@/components/ui/chart";
+import { CartesianGrid, XAxis, YAxis, Line, LineChart, ResponsiveContainer } from "recharts";
 
 interface LinechartChartProps {
-    data: { name: string; value: number }[];
+    data: { name: string; value: number | null }[];
 }
 
 export function LinechartChart({ data }: LinechartChartProps) {
+    const validData = data.filter(item => item.value !== null);
+
+    if (validData.length === 0) {
+        return <div>No valid data available</div>;
+    }
+
+    const chartConfig = {
+        line: { theme: { light: "#8884d8", dark: "#8884d8" } }
+    };
+
     return (
-        <ResponsiveContainer width="100%" height={250}>
-            <ChartContainer
-                config={{
-                    desktop: {
-                        label: "Financial Data",
-                        color: "hsl(var(--chart-1))",
-                    },
-                }}
-            >
-                <LineChart data={data} margin={{ left: 12, right: 12 }}>
-                    <CartesianGrid vertical={false} />
+        <ChartContainer config={chartConfig}>
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={validData}>
+                    <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-                    <Line dataKey="value" type="monotone" stroke="var(--color-desktop)" strokeWidth={2} dot={true} />
+                    <YAxis />
+                    <ChartTooltip
+                        content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                return (
+                                    <ChartTooltipContent
+                                        title={data.name}
+                                        content={`${data.value}`}
+                                    />
+                                );
+                            }
+                            return null;
+                        }}
+                    />
+                    <Line type="monotone" dataKey="value" stroke={chartConfig.line.theme.light} />
                 </LineChart>
-            </ChartContainer>
-        </ResponsiveContainer>
+            </ResponsiveContainer>
+        </ChartContainer>
     );
 }
