@@ -7,7 +7,7 @@ interface PiechartlabelChartProps {
     data: { name: string; value: number | null }[];
 }
 
-const COLORS = ['#0088FE', '#00C49F'];
+const COLORS = ['#0c9b9b', '#ad9374', '#c5613d', '#2bbf9f', '#1bd8ab'];
 
 export function PiechartlabelChart({ data }: PiechartlabelChartProps) {
     const validData = data.filter(item => item.value !== null);

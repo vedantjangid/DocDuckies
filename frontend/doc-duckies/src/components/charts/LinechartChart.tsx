@@ -24,7 +24,7 @@ export function LinechartChart({ data }: LinechartChartProps) {
                 <LineChart data={validData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    {/* <YAxis /> */}
                     <ChartTooltip
                         content={({ active, payload }) => {
                             if (active && payload && payload.length) {

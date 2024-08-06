@@ -8,7 +8,7 @@ import axios from 'axios';
 
 // Initialize Google Cloud Storage
 const storage = new Storage();
-const bucket = storage.bucket('document-ai-financial-storage'); // Replace with your bucket name
+const bucket = storage.bucket('document-ai-financial-storage'); 
 
 export const config = {
   api: {

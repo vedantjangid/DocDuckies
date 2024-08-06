@@ -12,7 +12,7 @@ import { BarchartChart } from "./charts/BarchartChart"
 import { LinechartChart } from "./charts/LinechartChart"
 import { PiechartlabelChart } from "./charts/PiechartlabelChart"
 import { CheckIcon, GithubIcon, MountainIcon, UploadIcon } from "./icons"
-import { handleFileUpload } from "@/lib/api"
+import { handleFileUpload, downloadCSV } from "@/lib/api"
 import { FinancialData, initialFinancialData, processFinancialData } from "@/components/charts/data"
 
 export function DashBoard() {
@@ -56,19 +56,20 @@ export function DashBoard() {
   ].filter(item => item.value !== null);
 
   const financialRatiosData = [
-    { name: 'Current Ratio', value: financialData['Current-Ratio'] },
-    { name: 'Quick Ratio', value: financialData['Quick-Ratio'] },
     { name: 'Debt to Assets', value: financialData['Debt-to-Assets-Ratio'] },
     { name: 'Return on Assets', value: financialData['Return-on-Assets'] },
-    { name: 'Net Profit Margin', value: financialData['Net-Profit-Margin'] }
+    { name: 'Return on Equity', value: financialData['Return-on-Equity'] },
   ].filter(item => item.value !== null);
 
   const financialOverviewData = [
-    { name: 'Total Income', value: financialData['Total-Income'] },
-    { name: 'Total Expenditure', value: financialData['Total-Expenditure'] },
-    { name: 'Net Profit', value: financialData['Net-Profit'] },
-    { name: 'Total Assets', value: financialData['Total-Assets'] },
-    { name: 'Total Liabilities', value: financialData['Total-Liabilities'] }
+    { name: 'Profit', value: financialData['Net-Profit'] },
+    { name: 'Income', value: financialData['Total-Income'] },
+    // { name: 'Net Profit Margin', value: financialData['Net-Profit-Margin'] },
+    // { name: 'Current Ratio', value: financialData['Current-Ratio'] },
+    // { name: 'Quick Ratio', value: financialData['Quick-Ratio'] },
+    { name: 'Expenditure', value: financialData['Total-Expenditure'] },
+    { name: 'Assets', value: financialData['Total-Assets'] },
+    // { name: 'Liabilities', value: financialData['Total-Liabilities'] }
   ].filter(item => item.value !== null);
 
   return (
@@ -105,14 +106,14 @@ export function DashBoard() {
                       href="#"
                       className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:bg-primary/90 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-primary/50 data-[state=open]:bg-primary/50"
                     >
-                      Financial Data
+                      Logs
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="outline" asChild>
+              <Button variant="destructive" asChild>
                 <Link href="/api/auth/logout">
                   <span className="font-black">Logout</span>
                 </Link>
@@ -153,7 +154,14 @@ export function DashBoard() {
               </div>
             </div>
             <div className="bg-background rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4">Financial Data</h2>
+              <div className="flex align-middle justify-between" >
+                <h2 className="text-xl font-bold mb-4">Financial Data</h2>
+                <Button variant="link" onClick={downloadCSV} asChild>
+                  <Link href="">
+                    <span className="font-black">Download CSV</span>
+                  </Link>
+                </Button>
+              </div>
               {financialData.Year ? (
                 <div className="overflow-auto">
                   <Table>
@@ -176,10 +184,11 @@ export function DashBoard() {
               ) : (
                 <p className="text-muted-foreground">No financial data available. Please upload a document.</p>
               )}
+
             </div>
-            <div className="bg-background rounded-lg shadow-md p-6 col-span-1 md:col-span-2">
+            <div className="bg-background rounded-lg shadow-md p-4 col-span-1 md:col-span-3">
               <h2 className="text-xl font-bold mb-4">Financial Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-4 md:grid-cols-2 gap-3">
                 <Card>
                   <CardHeader>
                     <CardDescription>Total Income vs Total Expenditure</CardDescription>
@@ -199,7 +208,7 @@ export function DashBoard() {
                     <CardTitle>{financialData.Year || 'Year'}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <LinechartChart data={assetsLiabilitiesData} />
+                    <LinechartChart data={financialOverviewData} />
                   </CardContent>
                 </Card>
                 <Card>

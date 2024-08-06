@@ -1,6 +1,14 @@
+/* globals.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root {
+  --color-bar: #84d1d8;
+  /* or any color you prefer */
+}
 
 @layer base {
   :root {
@@ -63,6 +71,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

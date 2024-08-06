@@ -1,3 +1,4 @@
+// page.tsx
 import { DashBoard } from "@/components/dash-board";
 import MyApp from "../../pages/_app";
 

@@ -15,12 +15,12 @@ export const BarchartChart = ({ data }: BarchartChartProps) => {
     }
 
     const chartConfig = {
-        bar: { theme: { light: "#8884d8", dark: "#8884d8" } }
+        bar: { theme: { light: "#299d8f", dark: "#299d8f" } }
     };
 
     return (
         <ChartContainer config={chartConfig}>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="90%" height={100}>
                 <BarChart data={validData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
@@ -39,7 +39,7 @@ export const BarchartChart = ({ data }: BarchartChartProps) => {
                             return null;
                         }}
                     />
-                    <Bar dataKey="value" fill={chartConfig.bar.theme.light} />
+                    <Bar dataKey="value" fill={chartConfig.bar.theme.light} radius={8} />
                 </BarChart>
             </ResponsiveContainer>
         </ChartContainer>
