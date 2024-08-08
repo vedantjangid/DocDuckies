@@ -1,6 +1,4 @@
 // /pages/logs.tsx
-// /pages/logs.tsx
-
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -15,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
 import { Input } from "@/components/ui/input"
 import { GithubIcon, MountainIcon } from "@/components/icons"
+import { testLogAction } from '@/lib/logging';
 
 interface Log {
     timestamp: string;
@@ -29,21 +28,28 @@ export default function Logs() {
     const [searchTerm, setSearchTerm] = useState("")
     const [logs, setLogs] = useState<Log[]>([])
 
-    useEffect(() => {
-        const fetchLogs = async () => {
-            try {
-                const response = await fetch('/api/logs');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch logs');
-                }
-                const data = await response.json();
-                setLogs(data);
-            } catch (error) {
-                console.error('Error fetching logs:', error);
+    const fetchLogs = async () => {
+        try {
+            console.log('Fetching logs...');
+            const response = await fetch('/api/log');
+            if (!response.ok) {
+                throw new Error('Failed to fetch logs');
             }
-        };
+            const data = await response.json();
+            console.log('Received logs:', data);
+            setLogs(data);
+        } catch (error) {
+            console.error('Error fetching logs:', error);
+        }
+    };
 
+    useEffect(() => {
         fetchLogs();
+        // Set up an interval to fetch logs every 10 seconds
+        const intervalId = setInterval(fetchLogs, 10000);
+
+        // Clean up the interval when the component unmounts
+        return () => clearInterval(intervalId);
     }, []);
 
     const filteredLogs = logs.filter((log) =>
@@ -65,6 +71,12 @@ export default function Logs() {
         setSearchTerm(e.target.value)
         setCurrentPage(1)
     }
+
+    const handleTestLog = async () => {
+        await testLogAction();
+        // Fetch logs immediately after creating a test log
+        fetchLogs();
+    };
 
     const getLevelVariant = (level: string) => {
         switch (level.toLowerCase()) {
@@ -142,6 +154,12 @@ export default function Logs() {
                                         onChange={handleSearch}
                                     />
                                 </div>
+                                <Button onClick={handleTestLog}>
+                                    Create Test Log
+                                </Button>
+                                <Button onClick={fetchLogs}>
+                                    Refresh Logs
+                                </Button>
                             </div>
                             <div className="overflow-auto max-h-[500px] rounded-lg border">
                                 <Table>

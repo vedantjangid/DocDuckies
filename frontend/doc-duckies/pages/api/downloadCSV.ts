@@ -1,4 +1,5 @@
 // pages/api/downloadCSV.ts
+// pages/api/downloadCSV.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Storage } from '@google-cloud/storage';
 import { Logging } from '@google-cloud/logging';
@@ -10,22 +11,28 @@ const bucket = storage.bucket(process.env.OUTPUT_BUCKET_NAME || '');
 const logging = new Logging();
 const log = logging.log('docduckie-app-logs');
 
-const logAction = async (user: string, action: string, message: string) => {
-  const entry = log.entry({ resource: { type: 'global' } }, {
-    severity: 'INFO',
-    user,
-    action,
-    message,
+const logAction = async (user: string, action: string, message: string, severity: 'INFO' | 'ERROR' | 'WARNING' = 'INFO') => {
+  const entry = log.entry({
+    resource: { type: 'global' },
+    severity,
+    jsonPayload: {
+      user,
+      action,
+      message,
+      timestamp: new Date().toISOString(),
+    }
   });
   await log.write(entry);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
-    await logAction('System', 'Invalid Method', `Method ${req.method} Not Allowed for CSV download`);
+    await logAction('System', 'Invalid Method', `Method ${req.method} Not Allowed for CSV download`, 'ERROR');
     res.setHeader('Allow', ['GET']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
+
+  const user = req.query.user as string;
 
   try {
     console.log('Fetching files from Google Cloud Storage...');
@@ -33,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log(`Found ${files.length} files`);
 
     if (files.length === 0) {
-      await logAction('System', 'CSV Download', 'No files found in the bucket');
+      await logAction(user, 'CSV Download', 'No files found in the bucket', 'WARNING');
       return res.status(404).json({ error: 'No files found in the bucket' });
     }
 
@@ -57,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (fileContent.trim().startsWith('C')) {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=${latestFile.name}`);
-      await logAction(req.query.user as string, 'CSV Download', `Downloaded CSV file: ${latestFile.name}`);
+      await logAction(user, 'CSV Download', `Downloaded CSV file: ${latestFile.name}`, 'INFO');
       return res.status(200).send(fileContent);
     }
 
@@ -67,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       data = JSON.parse(fileContent);
     } catch (parseError: any) {
       console.error('Error parsing JSON:', parseError);
-      await logAction('System', 'CSV Download', `Error parsing JSON: ${parseError.message}`);
+      await logAction(user, 'CSV Download', `Error parsing JSON: ${parseError.message}`, 'ERROR');
       return res.status(500).json({ error: 'Error parsing file content', details: parseError.message });
     }
 
@@ -77,18 +84,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       csv = parse(data);
     } catch (csvError: any) {
       console.error('Error converting to CSV:', csvError);
-      await logAction('System', 'CSV Download', `Error converting to CSV: ${csvError.message}`);
+      await logAction(user, 'CSV Download', `Error converting to CSV: ${csvError.message}`, 'ERROR');
       return res.status(500).json({ error: 'Error converting to CSV', details: csvError.message });
     }
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename=${latestFile.name.replace('.json', '.csv')}`);
     console.log('Sending CSV data...');
-    await logAction(req.query.user as string, 'CSV Download', `Downloaded CSV file: ${latestFile.name.replace('.json', '.csv')}`);
+    await logAction(user, 'CSV Download', `Downloaded CSV file: ${latestFile.name.replace('.json', '.csv')}`, 'INFO');
     res.status(200).send(csv);
   } catch (error: any) {
     console.error('Error generating CSV:', error);
-    await logAction('System', 'CSV Download', `Error generating CSV: ${error.message}`);
+    await logAction(user, 'CSV Download', `Error generating CSV: ${error.message}`, 'ERROR');
     res.status(500).json({ error: 'Error generating CSV', details: error.message });
   }
 }
