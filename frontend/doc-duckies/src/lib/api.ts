@@ -1,4 +1,7 @@
+// lib/api.ts
+// lib/api.ts
 import { FinancialData } from '@/components/charts/data';
+import { logAction } from '@/lib/logging';  // Import the logAction function
 
 // login func
 export async function loginUser(email: string, password: string) {
@@ -22,7 +25,6 @@ export async function loginUser(email: string, password: string) {
     throw error;
   }
 }
-
 
 // upload func 
 export async function handleFileUpload(file: File): Promise<FinancialData> {
@@ -48,8 +50,6 @@ export async function handleFileUpload(file: File): Promise<FinancialData> {
 }
 
 // downloadCSV func
-
-
 export async function downloadCSV() {
   try {
     const response = await fetch('/api/downloadCSV', {
@@ -58,6 +58,7 @@ export async function downloadCSV() {
 
     if (!response.ok) {
       const errorText = await response.text();
+      await logAction(`Failed to download CSV: ${response.status} ${response.statusText}. ${errorText}`, 'ERROR');  // Log the error
       throw new Error(`Failed to download CSV: ${response.status} ${response.statusText}. ${errorText}`);
     }
 
@@ -69,8 +70,11 @@ export async function downloadCSV() {
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
+
+    await logAction('CSV downloaded successfully', 'INFO');  // Log the success
   } catch (error) {
     console.error('Error downloading CSV:', error);
+    await logAction(`Error downloading CSV: ${error.message}`, 'ERROR');  // Log the error
     throw error;
   }
 }

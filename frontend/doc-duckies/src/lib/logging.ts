@@ -1,4 +1,7 @@
 // lib/logging.ts
+// lib/logging.ts
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
 export const logAction = async (message: string | undefined, severity: 'INFO' | 'ERROR' | 'WARNING' = 'INFO') => {
   if (typeof message !== 'string' || message.trim() === '') {
     console.warn('Attempted to log an empty or invalid message. Skipping.');
@@ -6,7 +9,7 @@ export const logAction = async (message: string | undefined, severity: 'INFO' | 
   }
 
   try {
-    const response = await fetch('/api/log', {
+    const response = await fetch(`${BASE_URL}/api/log`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 # Python specific
-__pycache__/
+**pycache**/
 *.pyc
 *.pyo
 *.pyd
@@ -7,17 +7,11 @@ __pycache__/
 *.egg-info/
 dist/
 build/
-*.env
 
 # Environment and configuration files
+documentai-430918-0976e0cd9010.json
+.env.local
 .env.yaml
-.env
-*.env
-config.yaml
-config.json
-
-# Service account key files
-*.json
 
 # Logs
 *.log

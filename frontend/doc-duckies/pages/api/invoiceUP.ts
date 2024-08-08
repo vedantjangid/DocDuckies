@@ -7,12 +7,8 @@ import fs from 'fs';
 import axios from 'axios';
 import { logAction } from '@/lib/logging';
 
-
 const storage = new Storage();
 const bucket = storage.bucket(process.env.GCS_BUCKET_NAME || '');
-
-const logging = new Logging();
-const log = logging.log('docduckie-app-logs');
 
 export const config = {
   api: {
@@ -36,9 +32,6 @@ const callCloudFunction = async (gsUrl: string) => {
 
   return response.data;
 };
-
-
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -71,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       const gsUrl = await uploadFileToGCS(file);
-      fs.unlinkSync(file.filepath); // Clean up the temporary file
+      fs.unlinkSync(file.filepath);
       const cloudFunctionResponse = await callCloudFunction(gsUrl);
 
       await logAction(`File ${file.originalFilename} uploaded successfully`, 'INFO');

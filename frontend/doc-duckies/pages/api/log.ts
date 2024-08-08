@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         jsonPayload: {
           message,
           timestamp: new Date().toISOString(),
-        }
+        },
       });
 
       await log.write(entry);
@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const [entries] = await log.getEntries({
         pageSize: 100,
         orderBy: 'timestamp desc',
-        filter: 'severity >= DEFAULT'
+        filter: 'severity >= DEFAULT',
       });
 
       const logs = entries
