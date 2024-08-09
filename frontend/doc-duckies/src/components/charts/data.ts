@@ -1,4 +1,4 @@
-// data.ts
+// components/charts/data.ts
 
 export interface FinancialData {
   Capital: string | number | null;

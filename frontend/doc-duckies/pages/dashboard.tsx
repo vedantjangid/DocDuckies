@@ -1,3 +1,5 @@
+// pages/dashboard.tsx
+
 import { DashBoard } from "@/components/dash-board";
 
 

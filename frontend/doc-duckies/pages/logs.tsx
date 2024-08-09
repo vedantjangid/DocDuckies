@@ -12,8 +12,10 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Badge } from "@/components/ui/badge"
 import { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationLink, PaginationNext } from "@/components/ui/pagination"
 import { Input } from "@/components/ui/input"
-import { GithubIcon, MountainIcon } from "@/components/icons"
+import { GithubIcon } from "@/components/icons"
 import { testLogAction } from '@/lib/logging';
+import Image from 'next/image';
+import duckLogo from '@/Logo/duck-svgrepo-com.svg';
 
 interface Log {
     timestamp: string;
@@ -117,9 +119,9 @@ export default function Logs() {
                 <>
                     <header className="bg-primary text-primary-foreground py-4 px-6 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <Link href="/" className="flex items-center" prefetch={false}>
-                                <MountainIcon className="h-6 w-6" />
-                                <span className="pl-2">DocDuckies</span>
+                            <Link href="#" className="flex" prefetch={false}>
+                                <Image src={duckLogo} alt="Logo" width={24} height={24} />
+                                <span className="pl-5">DocDuckies</span>
                             </Link>
                             <NavigationMenu>
                                 <NavigationMenuList>
