@@ -4,6 +4,8 @@
 
 DocDuckies is a web application that allows users to upload PDF documents and extract key financial data from them. The application uses Google Cloud's Document AI service to process the documents and stores the extracted data for later retrieval.
 
+<img width="1440" alt="Screenshot 2024-11-28 at 1 00 20 AM" src="https://github.com/user-attachments/assets/05d0b838-865b-41a6-885b-e4e5cc7d0e24">
+
 ## Project Structure
 
 The project is divided into two main components:
